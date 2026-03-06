@@ -11,7 +11,7 @@ const initDb = (callback) => {
     return callback(null, _db);
   }
   // This uses the variable name from .env file
-  MongoClient.connect(process.env.MONGODB_URI)
+  MongoClient.connect(process.env.MONGODB_URL)
     .then((client) => {
       _db = client;
       callback(null, _db);
