@@ -1,32 +1,15 @@
+const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-dotenv.config(); // This allows the file to read MONGODB_URI from the .env file
-const MongoClient = require('mongodb').MongoClient; // Imports the MongoDB driver
+dotenv.config();
 
-let _db;
-
-// This function starts the connection
-const initDb = (callback) => {
-  if (_db) {
-    console.log('Db is already initialized!'); // Prevents double-connecting
-    return callback(null, _db);
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URL);
+    console.log('Successfully connected to MongoDB via Mongoose');
+  } catch (err) {
+    console.error('Connection to MongoDB failed:', err.message);
+    process.exit(1); // Stop the app if it can't connect
   }
-  // This uses the variable name from .env file
-  MongoClient.connect(process.env.MONGODB_URL)
-    .then((client) => {
-      _db = client;
-      callback(null, _db);
-    })
-    .catch((err) => {
-      callback(err);
-    });
-};
+}
 
-// This function lets other files use the existing connection
-const getDb = () => {
-  if (!_db) {
-    throw Error('Db not initialized'); // Errors out if you try to get data before connecting
-  }
-  return _db;
-};
-
-module.exports = {initDb,getDb,};
+module.exports = connectDB;
